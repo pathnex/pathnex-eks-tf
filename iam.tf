@@ -105,8 +105,7 @@ resource "aws_iam_policy" "cluster_autoscaler" {
         Condition = {
           StringEquals = {
             "aws:ResourceTag/k8s.io/cluster-autoscaler/enabled" = "true"
-
-            "aws:ResourceTag/k8s.io/cluster-autoscaler/Pathnex-Sep-2026" = "owned"
+            "aws:ResourceTag/k8s.io/cluster-autoscaler/Pathnex-nov-2026" = "owned"
           }
         }
       }
@@ -133,4 +132,78 @@ resource "aws_eks_pod_identity_association" "cluster_autoscaler" {
     aws_eks_addon.pod_identity,
     aws_iam_role_policy_attachment.cluster_autoscaler
   ]
+}
+
+
+
+# ==========================================
+# EKS WORKER NODE IAM ROLE
+# ==========================================
+
+resource "aws_iam_role" "eks_node_role" {
+  name = "AmazonEKSNodeRole"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+
+    Statement = [
+      {
+        Effect = "Allow"
+
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+
+        Action = "sts:AssumeRole"
+      }
+    ]
+  })
+}
+
+# EKS Worker Node Policy
+resource "aws_iam_role_policy_attachment" "eks_worker_node" {
+  role = aws_iam_role.eks_node_role.name
+
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+}
+
+# EKS CNI Policy
+resource "aws_iam_role_policy_attachment" "eks_cni" {
+  role = aws_iam_role.eks_node_role.name
+
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+}
+
+# ECR Pull Policy
+resource "aws_iam_role_policy_attachment" "eks_ecr" {
+  role = aws_iam_role.eks_node_role.name
+
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPullOnly"
+}
+
+
+# EKS CLUSTER IAM ROLE
+
+resource "aws_iam_role" "eks_cluster_role" {
+  name = "AmazonEKSClusterRole"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+
+    Statement = [{
+      Effect = "Allow"
+
+      Principal = {
+        Service = "eks.amazonaws.com"
+      }
+
+      Action = "sts:AssumeRole"
+    }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "eks_cluster_policy" {
+  role = aws_iam_role.eks_cluster_role.name
+
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
 }

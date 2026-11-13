@@ -1,6 +1,6 @@
 resource "helm_release" "cluster_autoscaler" {
-  name       = "cluster-autoscaler"
-  namespace  = "kube-system"
+  name      = "cluster-autoscaler"
+  namespace = "kube-system"
 
   repository = "https://kubernetes.github.io/autoscaler"
   chart      = "cluster-autoscaler"

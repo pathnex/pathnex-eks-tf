@@ -6,6 +6,11 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 6.0"
     }
+    google = {
+      source = "hashicorp/google"
+      # Choose one version:
+      version = "> 5.4.3"
+    }
   }
 }
 
@@ -15,7 +20,7 @@ provider "aws" {
 
 provider "helm" {
   kubernetes = {
-    host                   = aws_eks_cluster.pathnex.endpoint
+    host = aws_eks_cluster.pathnex.endpoint
     cluster_ca_certificate = base64decode(
       aws_eks_cluster.pathnex.certificate_authority[0].data
     )

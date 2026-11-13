@@ -1,7 +1,7 @@
 resource "aws_eks_cluster" "pathnex" {
-  name     = "Pathnex-Sep-2026"
-  role_arn = "arn:aws:iam::174132708859:role/AmazonEKSClusterRole"
-  version  = "1.35"
+  name     = "Pathnex-Nov-2026"
+  role_arn = aws_iam_role.eks_cluster_role.arn
+  version  = "1.36"
 
   upgrade_policy {
     support_type = "STANDARD"
@@ -9,13 +9,13 @@ resource "aws_eks_cluster" "pathnex" {
 
   vpc_config {
     subnet_ids = [
-      "subnet-095c754c9a7d7b2b4",
-      "subnet-023ef84fb12426b62",
-      "subnet-04bef87cc676fb109"
-    ]
-
+      "subnet-0c8e402019bf39260",
+      "subnet-036e80f1443e50c12",
+      "subnet-06fe4b0251c95b8a1"
+  ]
+  
     security_group_ids = [
-      "sg-0680ef70a519ab38c"
+      "sg-0d257e9dec69dbffd"
     ]
 
     endpoint_public_access  = true
@@ -26,6 +26,9 @@ resource "aws_eks_cluster" "pathnex" {
     ]
   }
   zonal_shift_config {
-         enabled = false
-        }
+    enabled = false
+  }
+  depends_on = [
+  aws_iam_role_policy_attachment.eks_cluster_policy
+]
 }

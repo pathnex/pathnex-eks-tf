@@ -1,2 +1,2 @@
-aws_region  = "ap-south-1"
-cluster_name = "Pathnex"
+aws_region   = "ap-south-1"
+cluster_name = "Pathnex-Nov"
